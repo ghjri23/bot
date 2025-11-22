@@ -5,21 +5,22 @@ FROM python:3.13-slim
 WORKDIR /app
 
 # --- 必要なシステムパッケージ ---
+# ffmpeg とビルドに必要な最低限のパッケージを追加
 RUN apt-get update && apt-get install -y \
     ffmpeg \
+    build-essential \
+    libffi-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# --- Python依存関係 ---
+# --- Python パッケージ ---
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# --- Botソースコード ---
+# --- Bot コードをコピー ---
 COPY bot.py .
 
-# --- 環境変数 ---
-# Render側でDISCORD_TOKENをSecretに登録して使う
-ENV DISCORD_TOKEN=${DISCORD_TOKEN}
-ENV YDL_COOKIES_PATH=${YDL_COOKIES_PATH}  # 必要なら
+# --- 環境変数 (必要ならここにDISCORD_TOKENなどをセット可能) ---
+# ENV DISCORD_TOKEN=your_token_here
 
-# --- Bot起動 ---
+# --- Bot 起動 ---
 CMD ["python", "bot.py"]
