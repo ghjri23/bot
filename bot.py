@@ -17,12 +17,13 @@ volume_dict = {}    # {guild_id: float} 音量情報
 
 # --- ヘルパー関数 ---
 def get_audio_source(url):
-    """YouTube URLから直接音声URLを取得"""
+    """YouTube URLから直接音声URLを取得（Cookie対応）"""
     YDL_OPTIONS = {
         'format': 'bestaudio',
         'noplaylist': True,
         'quiet': True,
-        'default_search': 'ytsearch'
+        'default_search': 'ytsearch',
+        'cookiefile': 'cookies.txt'  # cookies.txt を同ディレクトリに置く
     }
     with YoutubeDL(YDL_OPTIONS) as ydl:
         info = ydl.extract_info(url, download=False)
@@ -72,13 +73,12 @@ async def music(ctx, url):
             await ctx.send("⚠️ まずボイスチャンネルに参加してください。")
             return
 
-    # 再生中の場合は停止
     if ctx.voice_client.is_playing():
         ctx.voice_client.stop()
 
     guild_id = ctx.guild.id
     current_music[guild_id] = url
-    volume = volume_dict.get(guild_id, 0.5)  # デフォルト音量50%
+    volume = volume_dict.get(guild_id, 0.5)
 
     try:
         source_url = await asyncio.to_thread(get_audio_source, url)
@@ -109,7 +109,6 @@ async def music(ctx, url):
 
 @bot.command()
 async def volume(ctx, vol: int):
-    """音量変更 0~100"""
     if ctx.voice_client is None:
         await ctx.send("⚠️ ボイスチャンネルに接続していません。")
         return
@@ -121,7 +120,6 @@ async def volume(ctx, vol: int):
     volume_dict[guild_id] = vol / 100
 
     if ctx.voice_client.is_playing():
-        # 再生中の音源の音量を即座に変更
         ctx.voice_client.source.volume = vol / 100
 
     await ctx.send(f"🔊 音量を **{vol}%** に設定しました。")
