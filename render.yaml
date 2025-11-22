@@ -1,13 +1,13 @@
 services:
-  - type: web               # Web Service として動かす
-    name: discord-music-bot # Render 上のサービス名（好きな名前でOK）
-    env: python             # Python 環境
-    plan: free              # 無料プラン
-    buildCommand: |
-      apt-get update
-      apt-get install -y ffmpeg
-      pip install -r requirements.txt
-    startCommand: python bot.py
+  - type: web
+    name: discord-bot
+    env: docker
+    dockerfilePath: ./Dockerfile
+    branch: main
+    plan: free
+    autoDeploy: true
     envVars:
       - key: DISCORD_TOKEN
-        value: $DISCORD_TOKEN  # Render のダッシュボードで設定する
+        fromSecret: DISCORD_TOKEN  # Render の Secrets に登録済みのトークン
+      - key: YDL_COOKIES_PATH
+        fromSecret: YDL_COOKIES_PATH  # yt-dlp 用の cookies パスが必要なら
