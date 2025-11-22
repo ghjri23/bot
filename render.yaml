@@ -1,8 +1,8 @@
 services:
-  - type: web               # Web Service として動かす（Worker はないので代用）
-    name: discord-music-bot # Render 上のサービス名（好きな名前でOK）
-    env: python             # Python 環境
-    plan: free              # 無料プラン
+  - type: worker
+    name: discord-music-bot
+    env: python
+    plan: free
     buildCommand: |
       sudo apt-get update
       sudo apt-get install -y ffmpeg
@@ -10,4 +10,4 @@ services:
     startCommand: python bot.py
     envVars:
       - key: DISCORD_TOKEN
-        value: $DISCORD_TOKEN
+        sync: false
