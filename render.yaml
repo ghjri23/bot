@@ -1,13 +1,13 @@
 services:
   - type: web
-    name: discord-bot
+    name: discord-music-bot
     env: docker
-    dockerfilePath: ./Dockerfile
+    plan: starter # 無料枠
+    repo: https://github.com/ghjri23/bot # GitHub リポジトリURL
     branch: main
-    plan: free
     autoDeploy: true
     envVars:
       - key: DISCORD_TOKEN
-        fromSecret: DISCORD_TOKEN  # Render の Secrets に登録済みのトークン
-      - key: YDL_COOKIES_PATH
-        fromSecret: YDL_COOKIES_PATH  # yt-dlp 用の cookies パスが必要なら
+        value: "<ここにDiscord Bot Tokenを入力>"
+    dockerContext: .
+    dockerCommand: python bot.py
