@@ -1,3 +1,4 @@
 discord.py==2.6.4
 yt-dlp==2025.11.12
 PyNaCl
+aiohttp<4,>=3.7.4
